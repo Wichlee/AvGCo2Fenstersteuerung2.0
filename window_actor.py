@@ -23,7 +23,7 @@ def connect_mqtt() -> mqtt_client:
     client.connect(broker, port)
     return client
 
-
+# todo: Fallunterscheidung öffnen Fenster und schließen Fenster in on_message
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
