@@ -3,12 +3,13 @@ import time
 
 from paho.mqtt import client as mqtt_client
 
-#set broker parameters and topic
+# set broker parameters and topic
 broker = 'test.mosquitto.org'
 port = 1883
 topic = "AvG/co2level"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{randint(0, 1000)}'
+
 
 # connect routine
 def connect_mqtt():
@@ -23,9 +24,9 @@ def connect_mqtt():
     client.connect(broker, port)
     return client
 
+
 # publish routine
 def publish(client):
-
     while True:
         time.sleep(1)
         randNumber = int(randint(1000, 3500))
@@ -36,7 +37,7 @@ def publish(client):
             print(f"Send `{randNumber}` to topic `{topic}`")
         else:
             print(f"Failed to send message to topic {topic}")
-        time.sleep(10)
+        time.sleep(2)
 
 
 def run():
