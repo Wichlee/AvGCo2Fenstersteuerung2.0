@@ -6,7 +6,7 @@ from paho.mqtt import client as mqtt_client
 # connect to remote test
 broker = 'test.mosquitto.org'
 port = 1883
-topic_actorwindow = "AvG/actorwindow"
+topic = "AvG/controlunit"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 
@@ -30,7 +30,7 @@ def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
 
-    client.subscribe(topic_actorwindow)
+    client.subscribe(topic)
     client.on_message = on_message
 
 
