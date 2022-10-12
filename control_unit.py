@@ -43,9 +43,10 @@ def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         if int(f"{msg.payload.decode()}") > 2500:
             print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-            publish_to_window(client, msg.payload.decode())
-        # print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-
+            publish_to_window(client, "open")
+        else:
+            print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+            publish_to_window(client, "close")
 
     client.subscribe(topic_co2level)
     client.on_message = on_message
@@ -54,7 +55,6 @@ def subscribe(client: mqtt_client):
 def run():
     client = connect_mqtt()
     subscribe(client)
-    # publish_window_actor(client)
     client.loop_forever()
 
 
