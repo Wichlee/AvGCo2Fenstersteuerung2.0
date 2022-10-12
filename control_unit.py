@@ -8,7 +8,7 @@ from paho.mqtt.client import Client
 broker = 'test.mosquitto.org'
 port = 1883
 topic_co2level = "AvG/co2level"
-topic_actorwindow = "AvG/actorwindow"
+topic_controlunit = "AvG/controlunit"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{randint(0, 1000)}'
 
@@ -28,24 +28,24 @@ def connect_mqtt():
 
 
 # publish routine
-def publish_window_actor(client):
-    while True:
-        time.sleep(1)
-        subscribe(client)
-        result = client.publish(topic_actorwindow, subscribe(client))
-        # result: [0, 1]
-        status = result[0]
-        if status == 0:
-            print(f"Send `{subscribe(client)}` to topic `{topic_actorwindow}`")
-        else:
-            print(f"Failed to send message to topic {topic_actorwindow}")
-        time.sleep(10)
+def publish_to_window(client, message):
+    time.sleep(1)
+    result = client.publish(topic_controlunit, message)
+    # result: [0, 1]
+    status = result[0]
+    if status == 0:
+        print(f"Send `{message}` to topic `{topic_controlunit}`")
+    else:
+        print(f"Failed to send message to topic {topic_controlunit}")
 
 
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-        # return msg.payload.decode()
+        if int(f"{msg.payload.decode()}") > 2500:
+            print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+            publish_to_window(client, msg.payload.decode())
+        # print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+
 
     client.subscribe(topic_co2level)
     client.on_message = on_message
