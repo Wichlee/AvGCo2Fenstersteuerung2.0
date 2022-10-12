@@ -15,7 +15,7 @@ client_id = f'python-mqtt-{randint(0, 1000)}'
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
-            print("Connected to MQTT Broker", broker, port)
+            print("CO2-sensor connected to MQTT Broker", broker, port)
         else:
             print("Failed to connect, return code %d\n", rc)
 
@@ -29,6 +29,7 @@ def connect_mqtt():
 def publish(client):
     while True:
         time.sleep(1)
+        # mocking a plausible value
         randNumber = int(randint(1000, 3500))
         result = client.publish(topic, randNumber)
         # result: [0, 1]
@@ -37,7 +38,7 @@ def publish(client):
             print(f"Send `{randNumber}` to topic `{topic}`")
         else:
             print(f"Failed to send message to topic {topic}")
-        time.sleep(2)
+        time.sleep(10)
 
 
 def run():

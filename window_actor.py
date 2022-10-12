@@ -5,7 +5,7 @@ from paho.mqtt import client as mqtt_client
 # connect to remote test
 broker = 'test.mosquitto.org'
 port = 1883
-topic = "AvG/controlunit"
+topic = "AvG/window_actor"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 window_open: bool = False
@@ -25,15 +25,24 @@ def connect_mqtt() -> mqtt_client:
     return client
 
 
-def subscribe(client: mqtt_client):
-    def on_message(client, userdata, msg):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-        decide(msg.payload.decode())
-
-    client.subscribe(topic)
-    client.on_message = on_message
+# Printing the actual window status
+def print_status(status):
+    print(f"Is the window now open? {status}\n----")
 
 
+# Mocking the opening process of the window actor
+def open_window():
+    window_open = True
+    print_status(window_open)
+
+
+# Mocking the closing process of the window actor
+def close_window():
+    window_open = False
+    print_status(window_open)
+
+
+# deciding whether to open or close the window actor by checking the message and the current window status
 def decide(message):
     if message == "open":
         if not window_open:
@@ -42,16 +51,14 @@ def decide(message):
         close_window()
 
 
-def open_window():
-    # Man würde normalerweise die Stellung des Servos anpassen um das Fenster zu öffen, aber print msg tuts auch...
-    window_open = True
-    print(f"Window open? -{window_open}")
+# subscription routine
+def subscribe(client: mqtt_client):
+    def on_message(client, userdata, msg):
+        print(f"Received `{msg.payload.decode()}`-window from topic `{msg.topic}`")
+        decide(msg.payload.decode())
 
-
-def close_window():
-    # Wir tun so als würde das Fenster einfach so schließen
-    window_open = False
-    print(f"Window open? -{window_open}")
+    client.subscribe(topic)
+    client.on_message = on_message
 
 
 def run():
