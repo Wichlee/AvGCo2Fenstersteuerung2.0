@@ -6,15 +6,16 @@ from paho.mqtt import client as mqtt_client
 # connect to remote test
 broker = 'test.mosquitto.org'
 port = 1883
-topic_actwindow = "AvG/actwindow"
+topic_actorwindow = "AvG/actorwindow"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
+
 
 # connect routine
 def connect_mqtt() -> mqtt_client:
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
-            print("Connected to MQTT Broker", broker, port)
+            print("Actor connected to MQTT Broker", broker, port)
         else:
             print("Failed to connect, return code %d\n", rc)
 
@@ -23,13 +24,24 @@ def connect_mqtt() -> mqtt_client:
     client.connect(broker, port)
     return client
 
+
 # todo: Fallunterscheidung öffnen Fenster und schließen Fenster in on_message
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
 
-    client.subscribe(topic_actwindow)
+    client.subscribe(topic_actorwindow)
     client.on_message = on_message
+
+
+def open_actor():
+    # Man würde normalerweise die Stellung des Servos anpassen um das Fenster zu öffen, aber print msg tuts auch...
+    print("Actor now opening")
+
+
+def close_actor():
+    # Wir tun so als würde das Fenster einfach so schließen
+    print("Actor now closing")
 
 
 def run():
