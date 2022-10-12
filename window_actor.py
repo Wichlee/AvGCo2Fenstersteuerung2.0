@@ -1,5 +1,4 @@
 import random
-import time
 
 from paho.mqtt import client as mqtt_client
 
@@ -9,6 +8,7 @@ port = 1883
 topic = "AvG/controlunit"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
+window_open: bool = False
 
 
 # connect routine
@@ -25,23 +25,33 @@ def connect_mqtt() -> mqtt_client:
     return client
 
 
-# todo: Fallunterscheidung öffnen Fenster und schließen Fenster in on_message
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+        decide(msg.payload.decode())
 
     client.subscribe(topic)
     client.on_message = on_message
 
 
-def open_actor():
+def decide(message):
+    if message == "open":
+        if not window_open:
+            open_window()
+    else:
+        close_window()
+
+
+def open_window():
     # Man würde normalerweise die Stellung des Servos anpassen um das Fenster zu öffen, aber print msg tuts auch...
-    print("Actor now opening")
+    window_open = True
+    print(f"Window open? -{window_open}")
 
 
-def close_actor():
+def close_window():
     # Wir tun so als würde das Fenster einfach so schließen
-    print("Actor now closing")
+    window_open = False
+    print(f"Window open? -{window_open}")
 
 
 def run():
