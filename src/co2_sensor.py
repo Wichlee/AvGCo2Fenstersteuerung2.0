@@ -27,8 +27,8 @@ def connect_mqtt():
 
 # publish routine
 def publish(client):
+    time.sleep(1)
     while True:
-        time.sleep(1)
         # mocking a plausible value
         randNumber = int(randint(1000, 3500))
         result = client.publish(topic, randNumber)
@@ -38,7 +38,7 @@ def publish(client):
             print(f"Send `{randNumber}` to topic `{topic}`")
         else:
             print(f"Failed to send message to topic {topic}")
-        time.sleep(10)
+        time.sleep(60)
 
 
 def run():
