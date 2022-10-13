@@ -10,7 +10,7 @@ topic_co2level = "AvG/co2level"
 topic_window_actor = "AvG/window_actor"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{randint(0, 1000)}'
-
+border_value = 1500
 
 # connect routine
 def connect_mqtt():
@@ -40,7 +40,7 @@ def publish_to_window(client, message):
 
 # deciding whether the received value ist too high or just fine to send a message to the window actor
 def decide(client, message):
-    if int(f"{int(message.payload.decode())}") > 2500:
+    if int(f"{message.payload.decode()}") > border_value:
         print(f"Received `{message.payload.decode()}` from `{message.topic}` topic\n~Too many aerosol particles!")
         publish_to_window(client, "open")
     else:
