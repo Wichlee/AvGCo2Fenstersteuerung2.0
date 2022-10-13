@@ -38,15 +38,20 @@ def publish_to_window(client, message):
         print(f"Failed to send message to topic {topic_window_actor}")
 
 
+# deciding whether the received value ist too high or just fine to send a message to the window actor
+def decide(client, message):
+    if int(f"{int(message.payload.decode())}") > 2500:
+        print(f"Received `{message.payload.decode()}` from `{message.topic}` topic\n~Too many aerosol particles!")
+        publish_to_window(client, "open")
+    else:
+        print(f"Received `{message.payload.decode()}` from `{message.topic}` topic\n~Air quality is ok.")
+        publish_to_window(client, "close")
+
+
 # subscription routine
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, message):
-        if int(f"{message.payload.decode()}") > 2500:
-            print(f"Received `{message.payload.decode()}` from `{message.topic}` topic\n~Too many aerosol particles!")
-            publish_to_window(client, "open")
-        else:
-            print(f"Received `{message.payload.decode()}` from `{message.topic}` topic\n~Air quality is ok.")
-            publish_to_window(client, "close")
+        decide(client, message)
 
     client.subscribe(topic_co2level)
     client.on_message = on_message
